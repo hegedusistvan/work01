@@ -17,7 +17,8 @@ RUN chmod 644 /home/ansible/.ssh/authorized_keys \
     && chown ansible:ansible /home/ansible/.ssh/authorized_keys \
     && service ssh start \
     && echo "/usr/sbin/sshd -D" > /entrypoint.sh \
+    && chmod +x /entrypoint.sh
 
 EXPOSE 22
 
-CMD ["/usr/sbin/sshd","-D"]
+ENTRYPOINT [ "/entrypoint.sh" ]

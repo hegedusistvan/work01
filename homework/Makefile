@@ -1,7 +1,9 @@
-# HELP
-# This will output the help for each task
+SHELL := /bin/bash
+
 .PHONY: help ssh_keygen create_dir_opt_data docker_pull docker_build_image docker_build_containers build run up ansible ssh-alpha ssh-bravo ssh-charlie
 
+# HELP
+# This will output the help for each task
 help: ## Show help messages
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
@@ -11,8 +13,8 @@ help: ## Show help messages
 ssh_keygen: ## Generate ssh keys for the ansible user
 	cd ./ssh-keys && if [[ ! -e "./ansible_id_rsa" ]]; then ssh-keygen -b 4096 -t rsa -N "" -f ansible_id_rsa; fi
 
-create_dir_opt_data: ## Create mapping directory for Charlie's /opt/data
-	if [[ ! -d "/tmp/charlie-opt-data" ]]; then mkdir /tmp/charlie-opt-data; fi
+# create_dir_opt_data: ## Create mapping directory for Charlie's /opt/data
+#	if [[ ! -d "/tmp/charlie-opt-data" ]]; then mkdir /tmp/charlie-opt-data; fi
 
 # DOCKER TASKS
 
@@ -28,6 +30,11 @@ docker_build_containers: ## Build the Docker Containers
 build: docker_pull docker_build_image docker_build_containers ## Pull the base Docker Image and build the Docker Image and Containers
 
 run: ## Run the Docker Containers
+	if test "$(CONTI_DB_NAME)" = "" ; then \
+		echo "You must specify CONTI_DB_NAME in the environment."; \
+		exit 1; \
+	fi
+
 	cd ./docker-compose && docker-compose up -d
 
 up: ssh_keygen create_dir_opt_data build run ## Bring up the Docker Containers
