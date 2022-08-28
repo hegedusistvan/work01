@@ -1,0 +1,26 @@
+---
+- name: "Set the MOTD"
+  template:
+    src: motd.j2
+    dest: "/etc/motd"
+    owner: root
+    group: root
+    mode: "0644"
+  when: motd | default('') != ""
+
+- name: "Set timezone variables"
+  copy:
+    content: "{{ timezone }}"
+    dest: "/etc/timezone"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - "Update timezone"
+  when: timezone | default('') != ""
+
+- name: "Add source repository into sources list"
+  apt_repository:
+    repo: "deb http://ftp.hosteurope.de/mirror/archive.ubuntu.com/ubuntu/dists focal main"
+    state: present
+  ignore_errors: true
