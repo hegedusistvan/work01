@@ -1,0 +1,57 @@
+Docker
+
+Extra challenges for the compose stack
+1. The names of the Docker containers running the services should
+be alpha, bravo and charlie. X
+
+2. The hostnames of the service containers should be alpha, bravo and charlie. X
+
+3. All three containers should be on a dedicated Docker network named conti-test.
+The conti-test network should be a block of 64 IP addresses starting
+with 172.16.100.128. The containers should have the following IP addresses:
+o alpha: 172.16.100.140
+bravo: 172.16.100.141
+charlie: 172.16.100.142 X
+
+4. When executing make up, the containers should come up in the following order:
+o alpha
+bravo
+charlie X
+
+5. The sshd process running in charlie should have access to two extra environment
+variables: CONTI_ENV and CONTI_DB_NAME. If the user sets and exports these variables in
+the shell environment before executing make up, their values should be visible by the
+sshd process running inside charlie.
+
+6. If the CONTI_ENV variable is not set by the user, it should default to prod.
+
+7. If the CONTI_DB_NAME variable is not set by the user, make up should fail with the
+following error message: "You must specify CONTI_DB_NAME in the environment."
+
+8. If the kernel runs short of memory and decides to unleash the OOM
+killer, charlie should have more chance to survive than alpha and bravo.
+
+9. The sshd process running in charlie should be able to open at least 1048576 file
+descriptors.
+
+10. Bravo should not be able to use more than 10% of a single CPU core. X
+
+11. Bravo should not be able to use more than 4 GB of memory. X
+
+12. Bravo should not start until the sshd running in alpha does not open its listening
+port. Charlie should not start until the sshd running in bravo does not open its
+listening port. X
+
+
+
+Ansible
+
+1. The timezone inside the containers should be set to the value of the timezone Ansible
+inventory variable. (note: it's not a problem if Ansible throws warnings during the
+execution of this task due to missing systemd components if the contents
+of /etc/timezone reflect the desired change) X
+
+2. APT inside the containers should be configured to use the APT mirror specified by
+the apt_mirror Ansible inventory variable. An example value for the apt_mirror variable
+would be http://ftp.hosteurope.de/mirror/archive.ubuntu.com/ubuntu (one of the
+official Ubuntu mirror servers
